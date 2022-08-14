@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Category, Like, Song, Favorite
 from .serializers import *
 from .permissions import CustomIsAdmin
@@ -6,9 +6,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework.pagination import PageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
+from django.core.paginator import Paginator
 
 
 class CategoryView(ModelViewSet):
@@ -22,7 +22,6 @@ class SongView(ModelViewSet):
     serializer_class = SongSerializer
     search_fields = ['name', 'artist']
     permission_classes = [IsAuthenticated]
-    pagination_class = PageNumberPagination
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ['title', 'artist', 'category']
     search_fields =['title', 'artist']
@@ -73,7 +72,6 @@ class SongView(ModelViewSet):
             favorite.save()
             return Response('Added to favorites!')
 
-
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
             permissions = []
@@ -94,3 +92,9 @@ class CommentView(ModelViewSet):
         serializer.save(owner=self.request.user)
 
 
+def index(request):
+    paginator= Paginator(Song.objects.all(),1)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context={"page_obj":page_obj}
+    return render(request,"index.html",context)

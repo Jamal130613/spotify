@@ -13,17 +13,19 @@ class Category(models.Model):
 
 
 class Song(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='songs')
     artist = models.CharField(max_length=50) 
     title = models.CharField(max_length=50)
     album = models.CharField(max_length=50)
     category = models.ForeignKey(Category,
                                 on_delete=models.CASCADE,
                                 related_name='music')
-    duration = models.DecimalField(max_digits=100, decimal_places=2)
+    duration = models.CharField(max_length=20)
     country = CountryField()
     created_at = models.DateField()
-    photo = models.ImageField(upload_to='songs', blank=True)
-    audio = models.FileField(upload_to='songs')
+    photo = models.ImageField(upload_to='photos', blank=True)
+    audio_file = models.FileField(upload_to='songs')
+    audio_link = models.CharField(max_length=200)
 
     class Meta:
         db_table='song'
