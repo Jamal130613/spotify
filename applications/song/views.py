@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Category, Like, Song, Favorite
+from .models import Category, Like, Song, Favorite, Playlist
 from .serializers import *
 from .permissions import CustomIsAdmin
 from rest_framework.permissions import IsAuthenticated
@@ -71,6 +71,16 @@ class SongView(ModelViewSet):
         else:
             favorite.save()
             return Response('Added to favorites!')
+
+    @action(methods=['POST'], detail=True)
+    def playlist(self, request, pk, *args, **kwargs):
+        playlist, _ = Playlist.objects.get_or_create(owner=request.user, song_id=pk)
+        if not _:
+            playlist.delete()
+            return Response('This song was deleted from your playlist')
+        else:
+            playlist.save()
+            return Response('This song was added to your playlist')
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:

@@ -13,7 +13,7 @@ app_name = "Song"
 
 urlpatterns = [
     path('', include(router.urls)),
-    path("index", views.index, name="index"),
+    path('index', views.index, name="index"),
 ]
 
 

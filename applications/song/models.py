@@ -97,3 +97,18 @@ class Favorite(models.Model):
 
     def __str__(self):
         return f'{self.owner} - {self.song}'
+
+
+class Playlist(models.Model):
+    name = models.CharField(max_length=50)
+    owner = models.ForeignKey(User,
+                            on_delete=models.CASCADE,
+                            related_name='playlist',
+                            verbose_name='playlist')
+    song = models.ForeignKey(Song, 
+                            on_delete=models.CASCADE, 
+                            related_name='playlist',
+                            verbose_name='Song')
+
+    def __str__(self):
+        return f'{self.name} - {self.song}'
